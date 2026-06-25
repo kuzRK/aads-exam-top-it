@@ -8,6 +8,7 @@ int main(int argc, char* argv[]) {
   using namespace sogdanov;
 
   if (argc > 3) {
+    std::cerr << "Too many arguments\n";
     return 1;
   }
 
@@ -20,17 +21,20 @@ int main(int argc, char* argv[]) {
     const std::string arg = argv[i];
     if (arg.length() >= 3 && arg.substr(0, 3) == "in:") {
       if (hasIn) {
+        std::cerr << "Duplicate in:\n";
         return 1;
       }
       inFile = arg.substr(3);
       hasIn = true;
     } else if (arg.length() >= 4 && arg.substr(0, 4) == "out:") {
       if (hasOut) {
+        std::cerr << "Duplicate out:\n";
         return 1;
       }
       outFile = arg.substr(4);
       hasOut = true;
     } else {
+      std::cerr << "Invalid argument format\n";
       return 1;
     }
   }
@@ -43,9 +47,19 @@ int main(int argc, char* argv[]) {
   if (hasIn) {
     fin.open(inFile);
     if (!fin.is_open()) {
+      std::cerr << "Cannot open input file\n";
       return 2;
     }
     input = &fin;
+  }
+
+  // Проверяем, не пустой ли файл абсолютно
+  input->peek();
+  if (input->eof()) {
+    if (hasIn) {
+      fin.close();
+    }
+    return 0;
   }
 
   HashTable< size_t, bool > seenIds;
@@ -56,10 +70,8 @@ int main(int argc, char* argv[]) {
   size_t successCount = 0;
   size_t ignoreCount = 0;
   std::string line;
-  bool hasLines = false;
 
   while (std::getline(*input, line)) {
-    hasLines = true;
     if (line.empty()) {
       continue;
     }
@@ -103,6 +115,7 @@ int main(int argc, char* argv[]) {
   if (hasOut) {
     fout.open(outFile);
     if (!fout.is_open()) {
+      std::cerr << "Cannot open output file\n";
       destroyArray(persons);
       destroyHashTable(seenIds);
       return 2;
@@ -114,12 +127,9 @@ int main(int argc, char* argv[]) {
     *output << persons.data[i].id << " " << persons.data[i].info << "\n";
   }
 
-  if (hasLines) {
-    std::cerr << successCount << " " << ignoreCount << "\n";
-  }
+  std::cerr << successCount << " " << ignoreCount << "\n";
 
   destroyArray(persons);
   destroyHashTable(seenIds);
 
 }
-
