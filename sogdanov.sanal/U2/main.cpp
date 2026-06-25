@@ -73,7 +73,7 @@ namespace sogdanov {
   }
 
   bool parseSizeT(const std::string& str, size_t& pos, size_t& out) {
-    pos = str.find_first_not_of(" \t\r", pos);
+    pos = str.find_first_not_of(" \t", pos);
     if (pos == std::string::npos) return false;
     size_t chars = 0;
     try {
@@ -82,6 +82,12 @@ namespace sogdanov {
       return true;
     } catch (...) {
       return false;
+    }
+  }
+
+  void trimRightCR(std::string& str) {
+    if (!str.empty() && str.back() == '\r') {
+      str.pop_back();
     }
   }
 
@@ -104,21 +110,21 @@ int main(int argc, char* argv[]) {
     const std::string arg = argv[i];
     if (arg.find("in:") == 0) {
       if (hasIn) {
-        std::cerr << "Invalid argument format\n";
-        return 0;
+        std::cerr << "Duplicate in file\n";
+        return 1;
       }
       inFilename = arg.substr(3);
       hasIn = true;
     } else if (arg.find("data:") == 0) {
       if (hasData) {
-        std::cerr << "Invalid argument format\n";
-        return 0;
+        std::cerr << "Duplicate data file\n";
+        return 1;
       }
       dataFilename = arg.substr(5);
       hasData = true;
     } else {
       std::cerr << "Invalid argument format\n";
-      return 0;
+      return 1;
     }
   }
 
@@ -141,6 +147,7 @@ int main(int argc, char* argv[]) {
     }
     std::string line;
     while (std::getline(fin, line)) {
+      trimRightCR(line);
       if (line.empty()) {
         continue;
       }
@@ -200,11 +207,12 @@ int main(int argc, char* argv[]) {
 
   std::string line;
   while (std::getline(std::cin, line)) {
-    size_t pos = line.find_first_not_of(" \t\r");
+    trimRightCR(line);
+    size_t pos = line.find_first_not_of(" \t");
     if (pos == std::string::npos) {
       continue;
     }
-    size_t end = line.find_first_of(" \t\r", pos);
+    size_t end = line.find_first_of(" \t", pos);
     std::string cmd = line.substr(pos, end - pos);
     pos = end;
 
@@ -291,7 +299,7 @@ int main(int argc, char* argv[]) {
         continue;
       }
 
-      pos = line.find_first_not_of(" \t\r", pos);
+      pos = line.find_first_not_of(" \t", pos);
       bool hasQuote = (pos != std::string::npos && line[pos] == '"');
       PersonRecord* p = nullptr;
       for (size_t i = 0; i < registry.size; ++i) {
@@ -421,12 +429,12 @@ int main(int argc, char* argv[]) {
       destroyVector(commonIds);
 
     } else if (cmd == "out-persons") {
-      pos = line.find_first_not_of(" \t\r", pos);
+      pos = line.find_first_not_of(" \t", pos);
       if (pos == std::string::npos) {
         std::cout << "<INVALID COMMAND>\n";
         continue;
       }
-      size_t e = line.find_first_of(" \t\r", pos);
+      size_t e = line.find_first_of(" \t", pos);
       std::string outFilename = (e == std::string::npos) ? line.substr(pos) : line.substr(pos, e - pos);
       std::ofstream fout(outFilename);
       if (!fout.is_open()) {
