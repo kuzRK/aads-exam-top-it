@@ -25,6 +25,4 @@ namespace sogdanov {
 
 }
 
-#include "HashTable.cpp"
-
 #endif
