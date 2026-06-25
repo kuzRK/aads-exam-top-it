@@ -4,13 +4,9 @@
 #include "../common/DynamicArray.hpp"
 #include "../common/HashTable.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv)
+{
   using namespace sogdanov;
-
-  if (argc > 3) {
-    std::cerr << "Too many arguments\n";
-    return 1;
-  }
 
   std::string inFile;
   std::string outFile;
@@ -18,17 +14,17 @@ int main(int argc, char* argv[]) {
   bool hasOut = false;
 
   for (int i = 1; i < argc; ++i) {
-    const std::string arg = argv[i];
-    if (arg.length() >= 3 && arg.substr(0, 3) == "in:") {
+    std::string arg = argv[i];
+    if (arg.find("in:") == 0) {
       if (hasIn) {
-        std::cerr << "Duplicate in:\n";
+        std::cerr << "Duplicate in argument\n";
         return 1;
       }
       inFile = arg.substr(3);
       hasIn = true;
-    } else if (arg.length() >= 4 && arg.substr(0, 4) == "out:") {
+    } else if (arg.find("out:") == 0) {
       if (hasOut) {
-        std::cerr << "Duplicate out:\n";
+        std::cerr << "Duplicate out argument\n";
         return 1;
       }
       outFile = arg.substr(4);
@@ -53,15 +49,6 @@ int main(int argc, char* argv[]) {
     input = &fin;
   }
 
-  // Проверяем, не пустой ли файл абсолютно
-  input->peek();
-  if (input->eof()) {
-    if (hasIn) {
-      fin.close();
-    }
-    return 0;
-  }
-
   HashTable< size_t, bool > seenIds;
   initHashTable(seenIds);
   DynamicArray persons;
@@ -73,6 +60,7 @@ int main(int argc, char* argv[]) {
 
   while (std::getline(*input, line)) {
     if (line.empty()) {
+      ignoreCount++;
       continue;
     }
 
@@ -133,3 +121,4 @@ int main(int argc, char* argv[]) {
   destroyHashTable(seenIds);
 
 }
+
