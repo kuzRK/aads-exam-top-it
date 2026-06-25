@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 
   if (argc > 3) {
     std::cerr << "Invalid arguments\n";
-    return 1;
+    return 0;
   }
 
   std::string inFile;
@@ -41,9 +41,7 @@ int main(int argc, char** argv)
   }
 
   std::istream* input = &std::cin;
-  std::ostream* output = &std::cout;
   std::ifstream fin;
-  std::ofstream fout;
 
   if (hasIn) {
     fin.open(inFile);
@@ -104,28 +102,32 @@ int main(int argc, char** argv)
     fin.close();
   }
 
+  std::cerr << successCount << " " << ignoreCount << "\n";
+
   if (hasOut) {
-    fout.open(outFile);
+    std::ofstream fout(outFile);
     if (!fout.is_open()) {
       std::cerr << "Cannot open file\n";
       destroyArray(persons);
       destroyHashTable(seenIds);
       return 2;
     }
-    output = &fout;
-  }
-
-  for (size_t i = 0; i < persons.size; ++i) {
-    *output << persons.data[i].id << " " << persons.data[i].info << "\n";
-  }
-
-  std::cerr << successCount << " " << ignoreCount << "\n";
-
-  if (hasOut) {
+    for (size_t i = 0; i < persons.size; ++i) {
+      fout << persons.data[i].id << " " << persons.data[i].info << "\n";
+    }
+    std::cout << "in file " << outFile << "\n";
+    for (size_t i = 0; i < persons.size; ++i) {
+      std::cout << persons.data[i].id << " " << persons.data[i].info << "\n";
+    }
     fout.close();
+  } else {
+    for (size_t i = 0; i < persons.size; ++i) {
+      std::cout << persons.data[i].id << " " << persons.data[i].info << "\n";
+    }
   }
 
   destroyArray(persons);
   destroyHashTable(seenIds);
 
+  return 0;
 }
