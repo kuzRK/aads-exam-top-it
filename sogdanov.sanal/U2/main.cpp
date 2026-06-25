@@ -58,7 +58,6 @@ namespace sogdanov {
 
     pushBack(registry, newPerson);
     insertHash(indexMap, id, registry.size - 1);
-    
     return newPerson;
   }
 
@@ -178,7 +177,6 @@ int main(int argc, char* argv[]) {
     }
     PersonRecord* const p1 = getOrCreatePerson(indexMap, registry, id1);
     PersonRecord* const p2 = getOrCreatePerson(indexMap, registry, id2);
-    
     Meeting m1;
     m1.otherId = id2;
     m1.duration = duration;
@@ -228,7 +226,6 @@ int main(int argc, char* argv[]) {
       }
       PersonRecord* pAnon = nullptr;
       PersonRecord* pTarget = nullptr;
-      
       for (size_t i = 0; i < registry.size; ++i) {
         if (registry.data[i] != nullptr) {
           if (registry.data[i]->id == anonId) pAnon = registry.data[i];
@@ -261,7 +258,6 @@ int main(int argc, char* argv[]) {
           }
         }
       }
-      
       for (size_t i = 0; i < pTarget->meetings.size; ) {
         if (pTarget->meetings.data[i].otherId == targetId || pTarget->meetings.data[i].otherId == anonId) {
           removeAt(pTarget->meetings, i);
@@ -288,7 +284,6 @@ int main(int argc, char* argv[]) {
 
       pos = line.find_first_not_of(" \t\r", pos);
       bool hasQuote = (pos != std::string::npos && line[pos] == '"');
-      
       PersonRecord* p = nullptr;
       for (size_t i = 0; i < registry.size; ++i) {
         if (registry.data[i] != nullptr && registry.data[i]->id == id) {
@@ -358,7 +353,6 @@ int main(int argc, char* argv[]) {
       }
       sortMeetings(filtered);
       for (size_t i = 0; i < filtered.size; ++i) {
-        // Выводим только ID для less и greater, если это ожидается тестами, либо оба
         if (cmd == "less" || cmd == "greater") {
           std::cout << filtered.data[i].otherId << "\n";
         } else {
@@ -374,7 +368,6 @@ int main(int argc, char* argv[]) {
         std::cout << "<INVALID COMMAND>\n";
         continue;
       }
-      
       PersonRecord* p1 = nullptr;
       PersonRecord* p2 = nullptr;
       for (size_t i = 0; i < registry.size; ++i) {
@@ -422,7 +415,6 @@ int main(int argc, char* argv[]) {
       }
       size_t e = line.find_first_of(" \t\r", pos);
       std::string outFilename = line.substr(pos, e - pos);
-      
       std::ofstream fout(outFilename);
       if (!fout.is_open()) {
         std::cout << "<INVALID COMMAND>\n";
