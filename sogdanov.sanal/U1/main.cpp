@@ -8,6 +8,11 @@ int main(int argc, char** argv)
 {
   using namespace sogdanov;
 
+  if (argc > 3) {
+    std::cerr << "Invalid arguments\n";
+    return 1;
+  }
+
   std::string inFile;
   std::string outFile;
   bool hasIn = false;
@@ -17,20 +22,20 @@ int main(int argc, char** argv)
     std::string arg = argv[i];
     if (arg.find("in:") == 0) {
       if (hasIn) {
-        std::cerr << "Duplicate in argument\n";
+        std::cerr << "Invalid arguments\n";
         return 1;
       }
       inFile = arg.substr(3);
       hasIn = true;
     } else if (arg.find("out:") == 0) {
       if (hasOut) {
-        std::cerr << "Duplicate out argument\n";
+        std::cerr << "Invalid arguments\n";
         return 1;
       }
       outFile = arg.substr(4);
       hasOut = true;
     } else {
-      std::cerr << "Invalid argument format\n";
+      std::cerr << "Invalid arguments\n";
       return 1;
     }
   }
@@ -43,7 +48,7 @@ int main(int argc, char** argv)
   if (hasIn) {
     fin.open(inFile);
     if (!fin.is_open()) {
-      std::cerr << "Cannot open input file\n";
+      std::cerr << "Cannot open file\n";
       return 2;
     }
     input = &fin;
@@ -59,8 +64,7 @@ int main(int argc, char** argv)
   std::string line;
 
   while (std::getline(*input, line)) {
-    if (line.empty()) {
-      ignoreCount++;
+    if (line.empty() || line.find_first_not_of(" \t\r") == std::string::npos) {
       continue;
     }
 
@@ -103,7 +107,7 @@ int main(int argc, char** argv)
   if (hasOut) {
     fout.open(outFile);
     if (!fout.is_open()) {
-      std::cerr << "Cannot open output file\n";
+      std::cerr << "Cannot open file\n";
       destroyArray(persons);
       destroyHashTable(seenIds);
       return 2;
@@ -117,8 +121,11 @@ int main(int argc, char** argv)
 
   std::cerr << successCount << " " << ignoreCount << "\n";
 
+  if (hasOut) {
+    fout.close();
+  }
+
   destroyArray(persons);
   destroyHashTable(seenIds);
 
 }
-
