@@ -8,7 +8,7 @@ jobs:
   branch:
     runs-on: ubuntu-latest
     container:
-      image: volgarenok/cxx-test:exam
+      image: caseyrgb/rgb-tested:latest
     steps:
       - uses: actions/checkout@v3
       - name: Branch
@@ -18,7 +18,7 @@ jobs:
   content:
     runs-on: ubuntu-latest
     container:
-      image: volgarenok/cxx-test:exam
+      image: caseyrgb/rgb-tested:latest
     steps:
       - uses: actions/checkout@v3
       - name: Content
@@ -28,7 +28,7 @@ jobs:
   author:
     runs-on: ubuntu-latest
     container:
-      image: volgarenok/cxx-test:exam
+      image: caseyrgb/rgb-tested:latest
     steps:
       - uses: actions/checkout@v3
       - name: Author
@@ -39,7 +39,7 @@ jobs:
     needs: [content, author, branch]
     runs-on: ubuntu-latest
     container:
-      image: volgarenok/cxx-test:exam
+      image: caseyrgb/rgb-tested:latest
     steps:
       - uses: actions/checkout@v3
       - name: Build
@@ -56,7 +56,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     container:
-      image: volgarenok/cxx-test:exam
+      image: caseyrgb/rgb-tested:latest
     steps:
       - uses: actions/checkout@v3
       - name: Acceptance
